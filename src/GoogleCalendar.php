@@ -7,6 +7,7 @@ use DateTime;
 use Google_Service_Calendar;
 use Google_Service_Calendar_Event;
 use Google_Service_Calendar_FreeBusyRequest;
+use Google_Service_Calendar_FreebusyResponse;
 
 class GoogleCalendar
 {
@@ -32,22 +33,22 @@ class GoogleCalendar
         Carbon $startDateTime = null,
         Carbon $endDateTime = null,
         string $calendarId = null
-    ): Google_Service_Calendar_Freebusy_Resource
+    ): Google_Service_Calendar_FreebusyResponse
     {
         $body = new Google_Service_Calendar_FreeBusyRequest;
         $start = Carbon::now()->startOfDay();
         $end = Carbon::now()->endOfDay();
 
         if (!$startDateTime) {
-            $body->setTimeMin(new DateTime($start->toDateTimeString()));
+            $body->setTimeMin($start->toAtomString());
         } else {
-            $body->setTimeMin(new DateTime($startDateTime->toDateTimeString()));
+            $body->setTimeMin($startDateTime->toAtomString());
         }
 
         if (!$endDateTime) {
-            $body->setTimeMax(new DateTime($end->toDateTimeString()));
+            $body->setTimeMax($end->toAtomString());
         } else {
-            $body->setTimeMin(new DateTime($endDateTime->toDateTimeString()));
+            $body->setTimeMin($endDateTime->toAtomString());
         }
 
         if (!$calendarId) {
