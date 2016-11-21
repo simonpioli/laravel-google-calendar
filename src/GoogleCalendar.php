@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use DateTime;
 use Google_Service_Calendar;
 use Google_Service_Calendar_Event;
+use Google_Service_Calendar_FreeBusyRequest;
 
 class GoogleCalendar
 {
@@ -25,6 +26,32 @@ class GoogleCalendar
     public function getCalendarId(): string
     {
         return $this->calendarId;
+    }
+
+    public function busy(
+        Carbon $startDateTime = null,
+        Carbon $endDateTime = null
+    ): bool
+    {
+        $body = new Google_Service_Calendar_FreeBusyRequest;
+        $start = Carbon::now()->startOfDay();
+        $end = Carbon::now()->endOfDay();
+
+        if (!$startDateTime) {
+            $body->setTimeMin($start);
+        } else {
+            $body->setTimeMin($startDateTime);
+        }
+
+        if (!$endDateTime) {
+            $body->setTimeMax($end);
+        } else {
+            $body->setTimeMin($endDateTime);
+        }
+
+        $body->setItems([$this->calendarId]);
+
+        return $this->calendarService->freebusy->query($body);
     }
 
     /**
