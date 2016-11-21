@@ -39,15 +39,15 @@ class GoogleCalendar
         $end = Carbon::now()->endOfDay();
 
         if (!$startDateTime) {
-            $body->setTimeMin($start);
+            $body->setTimeMin(new DateTime($start->toDateTimeString()));
         } else {
-            $body->setTimeMin($startDateTime);
+            $body->setTimeMin(new DateTime($startDateTime->toDateTimeString()));
         }
 
         if (!$endDateTime) {
-            $body->setTimeMax($end);
+            $body->setTimeMax(new DateTime($end->toDateTimeString()));
         } else {
-            $body->setTimeMin($endDateTime);
+            $body->setTimeMin(new DateTime($endDateTime->toDateTimeString()));
         }
 
         if (!$calendarId) {
