@@ -29,6 +29,13 @@ class GoogleCalendar
         return $this->calendarId;
     }
 
+    /**
+     * Gets FreeBusy Model
+     * @param  Carbon|null                              $startDateTime Start Time for Query
+     * @param  Carbon|null                              $endDateTime   End Time for Query
+     * @param  string|null                              $calendarId    Calendar to Query
+     * @return Google_Service_Calendar_FreebusyResponse                FreeBusy Response Object
+     */
     public function busy(
         Carbon $startDateTime = null,
         Carbon $endDateTime = null,
@@ -52,9 +59,9 @@ class GoogleCalendar
         }
 
         if (!$calendarId) {
-            $body->setItems([$this->calendarId]);
+            $body->setItems([['id' => $this->calendarId]]);
         } else {
-            $body->setItems([$calendarId]);
+            $body->setItems([['id' => $calendarId]]);
         }
 
         return $this->calendarService->freebusy->query($body);
