@@ -32,7 +32,7 @@ class GoogleCalendar
         Carbon $startDateTime = null,
         Carbon $endDateTime = null,
         string $calendarId = null
-    ): bool
+    ): Google_Service_Calendar_Freebusy_Resource
     {
         $body = new Google_Service_Calendar_FreeBusyRequest;
         $start = Carbon::now()->startOfDay();
