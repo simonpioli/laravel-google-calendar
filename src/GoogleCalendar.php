@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\GoogleCalendar;
+namespace Simonpioli\GoogleCalendar;
 
 use Carbon\Carbon;
 use DateTime;
@@ -105,7 +105,7 @@ class GoogleCalendar
     /**
      * Insert an event.
      *
-     * @param \Spatie\GoogleCalendar\Event|Google_Service_Calendar_Event $event
+     * @param \Simonpioli\GoogleCalendar\Event|Google_Service_Calendar_Event $event
      *
      * @link https://developers.google.com/google-apps/calendar/v3/reference/events/insert
      *
@@ -121,7 +121,7 @@ class GoogleCalendar
     }
 
     /**
-     * @param \Spatie\GoogleCalendar\Event|Google_Service_Calendar_Event $event
+     * @param \Simonpioli\GoogleCalendar\Event|Google_Service_Calendar_Event $event
      *
      * @return \Google_Service_Calendar_Event
      */
@@ -135,7 +135,7 @@ class GoogleCalendar
     }
 
     /**
-     * @param string|\Spatie\GoogleCalendar\Event $eventId
+     * @param string|\Simonpioli\GoogleCalendar\Event $eventId
      */
     public function deleteEvent($eventId)
     {
