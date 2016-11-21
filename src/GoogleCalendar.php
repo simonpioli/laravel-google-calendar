@@ -30,7 +30,8 @@ class GoogleCalendar
 
     public function busy(
         Carbon $startDateTime = null,
-        Carbon $endDateTime = null
+        Carbon $endDateTime = null,
+        string $calendarId = null
     ): bool
     {
         $body = new Google_Service_Calendar_FreeBusyRequest;
@@ -49,7 +50,11 @@ class GoogleCalendar
             $body->setTimeMin($endDateTime);
         }
 
-        $body->setItems([$this->calendarId]);
+        if (!$calendarId) {
+            $body->setItems([$this->calendarId]);
+        } else {
+            $body->setItems([$calendarId]);
+        }
 
         return $this->calendarService->freebusy->query($body);
     }
