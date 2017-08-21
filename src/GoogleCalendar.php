@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\GoogleCalendar;
+namespace Simonpioli\GoogleCalendar;
 
 use DateTime;
 use Carbon\Carbon;
@@ -69,7 +69,7 @@ class GoogleCalendar
     {
         $body = new Google_Service_Calendar_FreeBusyRequest;
         $start = Carbon::now()->startOfDay();
-        $end = Carbon::now()->endOfDay();
+        $end = Carbon::now()->addYear()->endOfDay();
 
         if (!$startDateTime) {
             $body->setTimeMin($start->toAtomString());

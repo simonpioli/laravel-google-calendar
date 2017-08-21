@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\GoogleCalendar;
+namespace Simonpioli\GoogleCalendar;
 
 use DateTime;
 use Carbon\Carbon;

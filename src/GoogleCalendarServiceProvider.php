@@ -3,7 +3,7 @@
 namespace Simonpioli\GoogleCalendar;
 
 use Illuminate\Support\ServiceProvider;
-use Spatie\GoogleCalendar\Exceptions\InvalidConfiguration;
+use Simonpioli\GoogleCalendar\Exceptions\InvalidConfiguration;
 
 class GoogleCalendarServiceProvider extends ServiceProvider
 {
