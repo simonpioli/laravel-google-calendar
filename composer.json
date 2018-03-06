@@ -32,12 +32,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Spatie\\GoogleCalendar\\": "src"
+            "Simonpioli\\GoogleCalendar\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Spatie\\GoogleCalendar\\Tests\\": "tests"
+            "Simonpioli\\GoogleCalendar\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -46,10 +46,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Spatie\\GoogleCalendar\\GoogleCalendarServiceProvider"
+                "Simonpioli\\GoogleCalendar\\GoogleCalendarServiceProvider"
             ],
             "aliases": {
-                "GoogleCalendar": "Spatie\\GoogleCalendar\\GoogleCalendarFacade"
+                "GoogleCalendar": "Simonpioli\\GoogleCalendar\\GoogleCalendarFacade"
             }
         }
     },
