@@ -2,11 +2,14 @@
 
 namespace Simonpioli\GoogleCalendar;
 
-use DateTime;
 use Carbon\Carbon;
+use Carbon\CarbonInterface;
+use DateTime;
 use Google_Service_Calendar_Event;
-use Illuminate\Support\Collection;
 use Google_Service_Calendar_EventDateTime;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class Event
 {
@@ -47,7 +50,7 @@ class Event
      *
      * @return mixed
      */
-    public static function create(array $properties, string $calendarId = null)
+    public static function create(array $properties, string $calendarId = null, $optParams = [])
     {
         $event = new static;
 
@@ -57,26 +60,42 @@ class Event
             $event->$name = $value;
         }
 
-        return $event->save('insertEvent');
+        return $event->save('insertEvent', $optParams);
     }
 
-    public static function get(Carbon $startDateTime = null, Carbon $endDateTime = null, array $queryParameters = [], string $calendarId = null) : Collection
+    public static function get(CarbonInterface $startDateTime = null, CarbonInterface $endDateTime = null, array $queryParameters = [], string $calendarId = null): Collection
     {
         $googleCalendar = static::getGoogleCalendar($calendarId);
 
         $googleEvents = $googleCalendar->listEvents($startDateTime, $endDateTime, $queryParameters);
 
-        return collect($googleEvents)
+        $googleEventsList = $googleEvents->getItems();
+
+        while ($googleEvents->getNextPageToken()) {
+            $queryParameters['pageToken'] = $googleEvents->getNextPageToken();
+
+            $googleEvents = $googleCalendar->listEvents($startDateTime, $endDateTime, $queryParameters);
+
+            $googleEventsList = array_merge($googleEventsList, $googleEvents->getItems());
+        }
+
+        $useUserOrder = isset($queryParameters['orderBy']);
+
+        return collect($googleEventsList)
             ->map(function (Google_Service_Calendar_Event $event) use ($calendarId) {
                 return static::createFromGoogleCalendarEvent($event, $calendarId);
             })
-            ->sortBy(function (Event $event) {
+            ->sortBy(function (self $event, $index) use ($useUserOrder) {
+                if ($useUserOrder) {
+                    return $index;
+                }
+
                 return $event->sortDate;
             })
             ->values();
     }
 
-    public static function find($eventId, string $calendarId = null): Event
+    public static function find($eventId, string $calendarId = null): self
     {
         $googleCalendar = static::getGoogleCalendar($calendarId);
 
@@ -93,7 +112,7 @@ class Event
             return $this->getSortDate();
         }
 
-        $value = array_get($this->googleEvent, $name);
+        $value = Arr::get($this->googleEvent, $name);
 
         if (in_array($name, ['start.date', 'end.date']) && $value) {
             $value = Carbon::createFromFormat('Y-m-d', $value)->startOfDay();
@@ -116,7 +135,7 @@ class Event
             return;
         }
 
-        array_set($this->googleEvent, $name, $value);
+        Arr::set($this->googleEvent, $name, $value);
     }
 
     public function exists(): bool
@@ -129,7 +148,7 @@ class Event
         return is_null($this->googleEvent['start']['dateTime']);
     }
 
-    public function save(string $method = null): Event
+    public function save(string $method = null, $optParams = []): self
     {
         $method = $method ?? ($this->exists() ? 'updateEvent' : 'insertEvent');
 
@@ -137,9 +156,18 @@ class Event
 
         $this->googleEvent->setAttendees($this->attendees);
 
-        $googleEvent = $googleCalendar->$method($this);
+        $googleEvent = $googleCalendar->$method($this, $optParams);
 
         return static::createFromGoogleCalendarEvent($googleEvent, $googleCalendar->getCalendarId());
+    }
+
+    public function update(array $attributes, $optParams = []): self
+    {
+        foreach ($attributes as $name => $value) {
+            $this->$name = $value;
+        }
+
+        return $this->save('updateEvent', $optParams);
     }
 
     public function delete(string $eventId = null)
@@ -165,6 +193,11 @@ class Event
         return '';
     }
 
+    public function getCalendarId(): string
+    {
+        return $this->calendarId;
+    }
+
     protected static function getGoogleCalendar(string $calendarId = null): GoogleCalendar
     {
         $calendarId = $calendarId ?? config('google-calendar.calendar_id');
@@ -186,11 +219,11 @@ class Event
             $eventDateTime->setTimezone($date->getTimezone());
         }
 
-        if (starts_with($name, 'start')) {
+        if (Str::startsWith($name, 'start')) {
             $this->googleEvent->setStart($eventDateTime);
         }
 
-        if (starts_with($name, 'end')) {
+        if (Str::startsWith($name, 'end')) {
             $this->googleEvent->setEnd($eventDateTime);
         }
     }
@@ -198,12 +231,12 @@ class Event
     protected function getFieldName(string $name): string
     {
         return [
-                   'name' => 'summary',
-                   'description' => 'description',
-                   'startDate' => 'start.date',
-                   'endDate' => 'end.date',
-                   'startDateTime' => 'start.dateTime',
-                   'endDateTime' => 'end.dateTime',
-               ][$name] ?? $name;
+            'name' => 'summary',
+            'description' => 'description',
+            'startDate' => 'start.date',
+            'endDate' => 'end.date',
+            'startDateTime' => 'start.dateTime',
+            'endDateTime' => 'end.dateTime',
+        ][$name] ?? $name;
     }
 }

@@ -2,8 +2,8 @@
 
 namespace Simonpioli\GoogleCalendar\Tests\Unit;
 
-use Mockery;
 use Google_Service_Calendar;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 use Simonpioli\GoogleCalendar\GoogleCalendar;
 
@@ -18,7 +18,7 @@ class GoogleCalendarTest extends TestCase
     /** @var \Simonpioli\GoogleCalendar\GoogleCalendar */
     protected $googleCalendar;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

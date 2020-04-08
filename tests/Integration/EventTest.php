@@ -2,8 +2,8 @@
 
 namespace Simonpioli\GoogleCalendar\Tests\Integration;
 
-use DateTime;
 use Carbon\Carbon;
+use DateTime;
 use Simonpioli\GoogleCalendar\Event;
 use Simonpioli\GoogleCalendar\Tests\TestCase;
 
@@ -12,7 +12,7 @@ class EventTest extends TestCase
     /** @var \Simonpioli\GoogleCalendar\Event */
     protected $event;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -81,6 +81,14 @@ class EventTest extends TestCase
         $this->event->name = 'testname';
 
         $this->assertEquals('testname', $this->event->googleEvent['summary']);
+    }
+
+    /** @test */
+    public function it_can_set_a_description()
+    {
+        $this->event->description = 'Test Description';
+
+        $this->assertEquals('Test Description', $this->event->googleEvent['description']);
     }
 
     /** @test */

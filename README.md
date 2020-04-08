@@ -2,8 +2,7 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-google-calendar.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-google-calendar)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Build Status](https://img.shields.io/travis/spatie/laravel-google-calendar/master.svg?style=flat-square)](https://travis-ci.org/spatie/laravel-google-calendar)
-[![SensioLabsInsight](https://img.shields.io/sensiolabs/i/a966412b-091b-4407-b509-6f7472935b0e.svg?style=flat-square)](https://insight.sensiolabs.com/projects/a966412b-091b-4407-b509-6f7472935b0e)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/spatie/laravel-google-calendar/run-tests?label=tests)
 [![Quality Score](https://img.shields.io/scrutinizer/g/spatie/laravel-google-calendar.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/laravel-google-calendar)
 [![StyleCI](https://styleci.io/repos/58305903/shield?branch=master)](https://styleci.io/repos/58305903)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-google-calendar.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-google-calendar)
@@ -27,13 +26,16 @@ $event->save();
 // get all future events on a calendar
 $events = Event::get();
 
+// update existing event
 $firstEvent = $events->first();
 $firstEvent->name = 'updated name';
 $firstEvent->save();
 
+$firstEvent->update(['name' => 'updated again']);
+
 // create a new event
 Event::create([
-   'name' => 'A new event'
+   'name' => 'A new event',
    'startDateTime' => Carbon\Carbon::now(),
    'endDateTime' => Carbon\Carbon::now()->addHour(),
 ]);
@@ -44,13 +46,12 @@ $event->delete();
 
 Spatie is a webdesign agency based in Antwerp, Belgium. You'll find an overview of all our open source projects [on our website](https://spatie.be/opensource).
 
-## Postcardware
+## Support us
 
-You're free to use this package (it's [MIT-licensed](LICENSE.md)), but if it makes it to your production environment when highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using.
+We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us). 
 
-Our address is: Spatie, Samberstraat 69D, 2060 Antwerp, Belgium.
+We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
 
-All postcards are published [on our website](https://spatie.be/en/opensource/postcards).
 
 ## Installation
 
@@ -85,7 +86,7 @@ You must publish the configuration with this command:
 php artisan vendor:publish --provider="Spatie\GoogleCalendar\GoogleCalendarServiceProvider"
 ```
 
-This will publish file called `google-calendar.php` in your config-directory with this contents:
+This will publish a file called `google-calendar.php` in your config-directory with these contents:
 ```
 return [
     /*
@@ -103,31 +104,45 @@ return [
 
 ## How to obtain the credentials to communicate with Google Calendar
 
-The first thing you’ll need to do is to get some credentials to use Google API’s. I’m assuming that you’ve already created a Google account and are signed in. Head over to [Google API console](https://console.developers.google.com/apis) and click "Select a project" in the header.
+The first thing you’ll need to do is get credentials to use Google's API. I’m assuming that you’ve already created a Google account and are signed in. Head over to [Google API console](https://console.developers.google.com/apis) and click "Select a project" in the header.
 
-![1](https://spatie.github.io/laravel-google-calendar/v2/1.jpg)
+![1](./docs/v2/1.png)
 
-Next up we must specify which API’s the project may consume. In the list of available API’s click "Google Analytics API". On the next screen click "Enable".
+Next up we must specify which APIs the project may consume. From the header, select "Enable APIs and Services".
 
-![2](https://spatie.github.io/laravel-google-calendar/v2/2.jpg)
+![2](./docs/v2/2.png)
 
-Now that you’ve created a project that has access to the Analytics API it’s time to download a file with these credentials. Click "Credentials" in the sidebar. You’ll want to create a "Service account key".
+On the next page, search for "Calendar" and select "Google Calendar API" from the list.
 
-![3](https://spatie.github.io/laravel-google-calendar/v2/3.jpg)
+![3](./docs/v2/3.png)
 
-On the next screen you can give the service account a name. You can name it anything you’d like. In the service account id you’ll see an email address. We’ll use this email address later on in this guide. Select "JSON" as the key type and click "Create" to download the JSON file.
+From here, press "Enable" to enable the Google Calendar API for this project.
 
-![4](https://spatie.github.io/laravel-google-calendar/v2/4.jpg)
+![4](./docs/v2/4.png)
 
-Save the json inside your Laravel project at the location specified in the `service_account_credentials_json` key of the config file of this package. Because the json file contains potentially sensitive information I don't recommend committing it to your git repository.
+Now that you've created a project that has access to the Calendar API it's time to download a file with these credentials. Click "Credentials" in the sidebar and then press the "Credentials in APIs & Services" link.
 
-Now that everything is set up on the API site, we’ll need to configure some things on the Google Calendar site. Head over Google Calendar and view the settings of the calendar you want to work with via PHP.  On the “Share this Calendar” tab add the service account id that was displayed when creating credentials on the API site. 
+![5](./docs/v2/5.png)
 
-![5](https://spatie.github.io/laravel-google-calendar/v2/5.jpg)
+From this page, open the "Create credentials" drop-down and select "Service account key".
 
-Open up the “Calendar Details” tab to see the id of the calendar. You need to specify that id in the config file.
+![6](./docs/v2/6.png)
 
-![6](https://spatie.github.io/laravel-google-calendar/v2/6.jpg)
+On the next screen, you can give the service account a name. You can name it anything you’d like. In the service account id you’ll see an email address. We’ll use this email address later on in this guide. Select "JSON" as the key type and click "Create" to download the JSON file. You will get a warning that the service account does not have a role, you can safely ignore this and create the service account without assigning a role.
+
+![7](./docs/v2/7.png)
+
+Save the json inside your Laravel project at the location specified in the `service_account_credentials_json` key of the config file of this package. Because the json file contains potentially sensitive information, I don't recommend committing it to your git repository.
+
+Now that everything is set up on the API site, we’ll need to configure some things on the Google Calendar site. Head over to Google Calendar and view the settings of the calendar you want to work with via PHP.  On the "Share with specific people" tab press the "Add people" button and add the service account id that was displayed when creating credentials on the API site. 
+
+![8](./docs/v2/8.png)
+
+![9](./docs/v2/9.png)
+
+Scroll down to the "Integrate calendar" section to see the id of the calendar. You need to specify that id in the config file.
+
+![10](./docs/v2/10.png)
 
 ## Usage
 
@@ -150,10 +165,10 @@ You can use these getters to retrieve start and end date as [Carbon](https://git
 ```php
 $events = Event::get();
 
-$event[0]->startDate;
-$event[0]->startDateTime;
-$event[0]->endDate;
-$event[0]->endDateTime;
+$events[0]->startDate;
+$events[0]->startDateTime;
+$events[0]->endDate;
+$events[0]->endDateTime;
 ```
 
 ### Creating an event
@@ -180,7 +195,7 @@ Event::create([
 ]);
 ```
 
-This will create an event with a specific start and end time. If you want to create a full day event you must use `startDate` and `endDate` instead of `startDateTime` and `endDateTime`.
+This will create an event with a specific start and end time. If you want to create a full-day event you must use `startDate` and `endDate` instead of `startDateTime` and `endDateTime`.
 
 ```php
 $event = new Event;
@@ -197,12 +212,12 @@ $event->save();
 Google assigns a unique id to every single event. You can get this id by getting events using the `get` method and getting the `id` property on a `Spatie\GoogleCalendar\Event`-object:
 ```php
 // get the id of the first upcoming event in the calendar.
-$calendarId = Event::get()->first()->id;
+$eventId = Event::get()->first()->id;
 ```
 
 You can use this id to fetch a single event from Google:
 ```php
-Event::find($calendarId);
+Event::find($eventId);
 ```
 
 ### Updating an event
@@ -214,6 +229,14 @@ $event = Event::find($eventId);
 
 $event->name = 'My updated title';
 $event->save();
+```
+
+Alternatively, you can use the update method:
+
+```php
+$event = Event::find($eventId)
+
+$event->update(['name' => 'My updated title']);
 ```
 
 ### Deleting an event
@@ -228,7 +251,7 @@ $event->delete();
 
 ### Limitations
 
-The Google Calendar API provides many options. This package doesn't support all of them. For instance recurring events cannot be managed properly with this package. If you stick to creating events with a name and a date you should be fine.
+The Google Calendar API provides many options. This package doesn't support all of them. For instance, recurring events cannot be managed properly with this package. If you stick to creating events with a name and a date you should be fine.
 
 ## Upgrading from v1 to v2
 
@@ -238,7 +261,7 @@ The only major difference between `v1` and `v2` is that under the hood Google AP
 
 ## Changelog
 
-Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
+Please see [CHANGELOG](CHANGELOG.md) for more information about what has changed recently.
 
 ## Testing
 
@@ -252,7 +275,7 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 ## Security
 
-If you discover any security related issues, please email freek@spatie.be instead of using the issue tracker.
+If you discover any security-related issues, please email freek@spatie.be instead of using the issue tracker.
 
 ## Credits
 
@@ -260,9 +283,6 @@ If you discover any security related issues, please email freek@spatie.be instea
 - [All Contributors](../../contributors)
 
 A big thank you to [Sebastiaan Luca](https://github.com/sebastiaanluca) for his big help creating v2 of this package.
-
-## About Spatie
-Spatie is a webdesign agency based in Antwerp, Belgium. You'll find an overview of all our open source projects [on our website](https://spatie.be/opensource).
 
 ## License
 

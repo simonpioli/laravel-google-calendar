@@ -2,10 +2,12 @@
 
 namespace Simonpioli\GoogleCalendar;
 
-use DateTime;
 use Carbon\Carbon;
+use Carbon\CarbonInterface;
+use DateTime;
 use Google_Service_Calendar;
 use Google_Service_Calendar_Event;
+use Google_Service_Calendar_Events;
 use Google_Service_Calendar_FreeBusyRequest;
 use Google_Service_Calendar_FreebusyResponse;
 
@@ -32,9 +34,12 @@ class GoogleCalendar
     /*
      * @link https://developers.google.com/google-apps/calendar/v3/reference/events/list
      */
-    public function listEvents(Carbon $startDateTime = null, Carbon $endDateTime = null, array $queryParameters = []): array
+    public function listEvents(CarbonInterface $startDateTime = null, CarbonInterface $endDateTime = null, array $queryParameters = []): Google_Service_Calendar_Events
     {
-        $parameters = ['singleEvents' => true];
+        $parameters = [
+            'singleEvents' => true,
+            'orderBy' => 'startTime',
+        ];
 
         if (is_null($startDateTime)) {
             $startDateTime = Carbon::now()->startOfDay();
@@ -52,8 +57,7 @@ class GoogleCalendar
         return $this
             ->calendarService
             ->events
-            ->listEvents($this->calendarId, $parameters)
-            ->getItems();
+            ->listEvents($this->calendarId, $parameters);
     }
 
     /**
@@ -102,13 +106,13 @@ class GoogleCalendar
     /*
      * @link https://developers.google.com/google-apps/calendar/v3/reference/events/insert
      */
-    public function insertEvent($event): Google_Service_Calendar_Event
+    public function insertEvent($event, $optParams = []): Google_Service_Calendar_Event
     {
         if ($event instanceof Event) {
             $event = $event->googleEvent;
         }
 
-        return $this->calendarService->events->insert($this->calendarId, $event);
+        return $this->calendarService->events->insert($this->calendarId, $event, $optParams);
     }
 
     public function updateEvent($event): Google_Service_Calendar_Event
