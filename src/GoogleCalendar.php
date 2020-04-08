@@ -6,6 +6,8 @@ use DateTime;
 use Carbon\Carbon;
 use Google_Service_Calendar;
 use Google_Service_Calendar_Event;
+use Google_Service_Calendar_FreeBusyRequest;
+use Google_Service_Calendar_FreebusyResponse;
 
 class GoogleCalendar
 {
@@ -69,7 +71,7 @@ class GoogleCalendar
     {
         $body = new Google_Service_Calendar_FreeBusyRequest;
         $start = Carbon::now()->startOfDay();
-        $end = Carbon::now()->addYear()->endOfDay();
+        $end = Carbon::now()->endOfDay();
 
         if (!$startDateTime) {
             $body->setTimeMin($start->toAtomString());
